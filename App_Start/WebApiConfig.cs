@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿using System.Web.Http;
 
 namespace Softt365Test
 {
@@ -9,9 +6,14 @@ namespace Softt365Test
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
 
-            // Web API routes
+            var json = config.Formatters.JsonFormatter;
+            json.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
+
+            // ----------------------------------
+            // ROUTING
+            // ----------------------------------
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(

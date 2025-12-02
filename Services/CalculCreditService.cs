@@ -1,5 +1,6 @@
 ﻿using Soft365Assessment.Services.Validators;
 using Softt365Assessment.Models.DTOs;
+using Softt365Assessment.Services.Constants;
 using System;
 using System.Collections.Generic;
 
@@ -7,13 +8,11 @@ namespace Softt365Assessment.Services
 {
     public class CalculCreditService : ICalculCreditService
     {
-        
         public CalculCreditResponseDto Calculer(CalculCreditRequestDto request)
         {
             var response = new CalculCreditResponseDto();
 
             var validator = new CalculCreditValidator();
-
             var errors = validator.Valider(request);
 
             if (errors.Count > 0)
@@ -33,9 +32,12 @@ namespace Softt365Assessment.Services
             }
             else
             {
-                if (request.MontantAchat > 50000)
+                if (request.MontantAchat > CreditConstants.SEUIL_FRAIS_ACHAT)
                 {
-                    fraisAchat = Math.Round(request.MontantAchat * 0.10m, 2);
+                    fraisAchat = Math.Round(
+                        request.MontantAchat * CreditConstants.FRAIS_ACHAT_TAUX,
+                        CreditConstants.ARRONDI_DEUX
+                    );
                 }
                 else
                 {
@@ -43,19 +45,27 @@ namespace Softt365Assessment.Services
                 }
             }
 
+            decimal montantEmprunterBrut = Math.Round(
+                request.MontantAchat + fraisAchat - request.FondsPropres,
+                CreditConstants.ARRONDI_DEUX
+            );
 
-            decimal montantEmprunterBrut =
-                Math.Round(request.MontantAchat + fraisAchat - request.FondsPropres, 2);
+            decimal fraisHypotheque = Math.Round(
+                montantEmprunterBrut * CreditConstants.FRAIS_HYPOTHEQUE_TAUX,
+                CreditConstants.ARRONDI_DEUX
+            );
 
-            decimal fraisHypotheque =
-                Math.Round(montantEmprunterBrut * 0.02m, 2);
-
-            decimal montantEmprunterNet =
-                Math.Round(montantEmprunterBrut + fraisHypotheque, 2);
+            decimal montantEmprunterNet = Math.Round(
+                montantEmprunterBrut + fraisHypotheque,
+                CreditConstants.ARRONDI_DEUX
+            );
 
             decimal tauxMensuelDecimal = CalculerTauxMensuelArrondi(request.TauxAnnuel);
 
-            decimal tauxMensuelAffiche = Math.Round(tauxMensuelDecimal * 100m, 3);
+            decimal tauxMensuelAffiche = Math.Round(
+                tauxMensuelDecimal * 100m,
+                CreditConstants.ARRONDI_TROIS
+            );
 
             decimal mensualite =
                 CalculerMensualite(montantEmprunterNet, tauxMensuelDecimal, request.DureeMois);
@@ -73,14 +83,15 @@ namespace Softt365Assessment.Services
             return response;
         }
 
-
         private decimal CalculerTauxMensuelArrondi(decimal tauxAnnuel)
         {
             double tA = (double)tauxAnnuel / 100.0;
-
             double mensuelRaw = Math.Pow(1 + tA, 1.0 / 12.0) - 1;
 
-            double mensuelPercent = Math.Round(mensuelRaw * 100, 3);
+            double mensuelPercent = Math.Round(
+                mensuelRaw * 100,
+                CreditConstants.ARRONDI_TROIS
+            );
 
             double tauxDecimal = mensuelPercent / 100;
 
@@ -90,7 +101,7 @@ namespace Softt365Assessment.Services
         private decimal CalculerMensualite(decimal capital, decimal t, int n)
         {
             if (t == 0)
-                return Math.Round(capital / n, 2, MidpointRounding.AwayFromZero);
+                return Math.Round(capital / n, CreditConstants.ARRONDI_DEUX, MidpointRounding.AwayFromZero);
 
             double C = (double)capital;
             double tm = (double)t;
@@ -98,7 +109,11 @@ namespace Softt365Assessment.Services
 
             double mensualite = C * tm * facteur / (facteur - 1);
 
-            return Math.Round((decimal)mensualite, 2, MidpointRounding.AwayFromZero);
+            return Math.Round(
+                (decimal)mensualite,
+                CreditConstants.ARRONDI_DEUX,
+                MidpointRounding.AwayFromZero
+            );
         }
 
         private List<LigneAmortissementDto> GenererAmortissement(
@@ -112,12 +127,16 @@ namespace Softt365Assessment.Services
 
             for (int periode = 1; periode <= duree; periode++)
             {
-                decimal debut = Math.Round(solde, 2);
+                decimal debut = Math.Round(solde, CreditConstants.ARRONDI_DEUX);
 
-                decimal interet = Math.Round(debut * tauxMensuel, 2, MidpointRounding.AwayFromZero);
+                decimal interet = Math.Round(
+                    debut * tauxMensuel,
+                    CreditConstants.ARRONDI_DEUX,
+                    MidpointRounding.AwayFromZero
+                );
 
                 decimal capitalRembourse = mensualite - interet;
-                decimal fin = Math.Round(debut - capitalRembourse, 2);
+                decimal fin = Math.Round(debut - capitalRembourse, CreditConstants.ARRONDI_DEUX);
 
                 if (periode == duree)
                 {
@@ -132,7 +151,7 @@ namespace Softt365Assessment.Services
                     SoldeDebut = debut,
                     Mensualite = mensualite,
                     Interet = interet,
-                    CapitalRembourse = Math.Round(capitalRembourse, 2),
+                    CapitalRembourse = Math.Round(capitalRembourse, CreditConstants.ARRONDI_DEUX),
                     SoldeFin = fin
                 });
 

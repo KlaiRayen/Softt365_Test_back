@@ -207,6 +207,7 @@
     <Compile Include="Models\DTOs\LigneAmortissementDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CalculCreditService.cs" />
+    <Compile Include="Services\Constants\CreditConstants.cs" />
     <Compile Include="Services\ICalculCreditService.cs" />
     <Compile Include="Services\Validators\CalculCreditValidator.cs" />
   </ItemGroup>

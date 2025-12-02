@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Softt365Test.Models.DTOs
+namespace Softt365Assessment.Models.DTOs
 {
     public class CalculCreditResponseDto
     {

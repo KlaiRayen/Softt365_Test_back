@@ -1,0 +1,43 @@
+﻿using Softt365Assessment.Models.DTOs;
+using System.Collections.Generic;
+
+namespace Soft365Assessment.Services.Validators
+{
+    public class CalculCreditValidator
+    {
+        public List<string> Valider(CalculCreditRequestDto request)
+        {
+            var errors = new List<string>();
+
+            if (request.MontantAchat <= 0)
+                errors.Add("Le montant d'achat doit être supérieur à 0.");
+
+            if (request.FondsPropres < 0)
+                errors.Add("Les fonds propres ne peuvent pas être négatifs.");
+
+            if (request.DureeMois < 1 || request.DureeMois > 600)
+                errors.Add("La durée doit être comprise entre 1 et 600 mois.");
+
+            if (request.TauxAnnuel < 0 || request.TauxAnnuel > 100)
+                errors.Add("Le taux annuel doit être compris entre 0% et 100%.");
+
+            if (request.FondsPropres > request.MontantAchat)
+                errors.Add("Les fonds propres ne peuvent pas dépasser le montant d'achat.");
+
+            decimal fraisAchat = request.MontantAchat * 0.10m;
+            decimal montantBrut = request.MontantAchat + fraisAchat - request.FondsPropres;
+
+            if (montantBrut <= 0)
+                errors.Add("Le montant à emprunter doit être supérieur à 0.");
+
+            if (request.FondsPropres >= request.MontantAchat)
+            {
+                errors.Add("Les fonds propres couvrent déjà le montant d'achat, aucun crédit n'est nécessaire.");
+                return errors;
+            }
+
+
+            return errors;
+        }
+    }
+}

@@ -1,6 +1,6 @@
-﻿using Softt365Test.Models.DTOs;
+﻿using Softt365Assessment.Models.DTOs;
 
-namespace Softt365Test.Services
+namespace Softt365Assessment.Services
 {
     public interface ICalculCreditService
     {

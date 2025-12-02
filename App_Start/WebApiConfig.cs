@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 
-namespace Softt365Test
+namespace Softt365Assessment
 {
     public static class WebApiConfig
     {

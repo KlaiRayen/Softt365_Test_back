@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Softt365Test.Models.DTOs
+namespace Softt365Assessment.Models.DTOs
 {
     public class CalculCreditRequestDto
     {

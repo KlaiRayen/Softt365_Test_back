@@ -1,32 +1,21 @@
-﻿using System;
+﻿using Soft365Assessment.Services.Validators;
+using Softt365Assessment.Models.DTOs;
+using System;
 using System.Collections.Generic;
-using Softt365Test.Models.DTOs;
 
-namespace Softt365Test.Services
+namespace Softt365Assessment.Services
 {
     public class CalculCreditService : ICalculCreditService
     {
-        private List<string> ValiderMetier(CalculCreditRequestDto request)
-        {
-            var errors = new List<string>();
-
-            if (request.FondsPropres > request.MontantAchat)
-                errors.Add("Les fonds propres ne peuvent pas dépasser le montant d'achat.");
-
-            var fraisAchat = request.MontantAchat * 0.10m;
-            var montantBrut = request.MontantAchat + fraisAchat - request.FondsPropres;
-
-            if (montantBrut <= 0)
-                errors.Add("Le montant à emprunter doit être supérieur à 0.");
-
-            return errors;
-        }
-
+        
         public CalculCreditResponseDto Calculer(CalculCreditRequestDto request)
         {
             var response = new CalculCreditResponseDto();
 
-            var errors = ValiderMetier(request);
+            var validator = new CalculCreditValidator();
+
+            var errors = validator.Valider(request);
+
             if (errors.Count > 0)
             {
                 response.Success = false;

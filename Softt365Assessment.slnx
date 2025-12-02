@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../Softt365Assessment.Tests/Softt365Assessment.Tests.csproj" Id="3f91ff41-fdde-4db8-8e41-53e08d89a54e" />
+  <Project Path="Softt365Assessment.csproj" Id="6f43e72d-5f35-471d-b6d6-58c19d2a97a2" />
+</Solution>

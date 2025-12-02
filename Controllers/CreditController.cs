@@ -1,8 +1,8 @@
 ﻿using System.Web.Http;
-using Softt365Test.Models.DTOs;
-using Softt365Test.Services;
+using Softt365Assessment.Models.DTOs;
+using Softt365Assessment.Services;
 
-namespace Softt365Test.Controllers
+namespace Softt365Assessment.Controllers
 {
     [RoutePrefix("api/credit")]
     public class CreditController : ApiController

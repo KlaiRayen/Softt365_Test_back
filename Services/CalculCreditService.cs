@@ -6,8 +6,36 @@ namespace Softt365Test.Services
 {
     public class CalculCreditService : ICalculCreditService
     {
+        private List<string> ValiderMetier(CalculCreditRequestDto request)
+        {
+            var errors = new List<string>();
+
+            if (request.FondsPropres > request.MontantAchat)
+                errors.Add("Les fonds propres ne peuvent pas dépasser le montant d'achat.");
+
+            var fraisAchat = request.MontantAchat * 0.10m;
+            var montantBrut = request.MontantAchat + fraisAchat - request.FondsPropres;
+
+            if (montantBrut <= 0)
+                errors.Add("Le montant à emprunter doit être supérieur à 0.");
+
+            return errors;
+        }
+
         public CalculCreditResponseDto Calculer(CalculCreditRequestDto request)
         {
+            var response = new CalculCreditResponseDto();
+
+            var errors = ValiderMetier(request);
+            if (errors.Count > 0)
+            {
+                response.Success = false;
+                response.Errors = errors;
+                return response;
+            }
+
+            response.Success = true;
+
             decimal fraisAchat = Math.Round(request.MontantAchat * 0.10m, 2);
 
             decimal montantEmprunterBrut =
@@ -29,16 +57,16 @@ namespace Softt365Test.Services
             var tableau = GenererAmortissement(
                 montantEmprunterNet, tauxMensuelDecimal, mensualite, request.DureeMois);
 
-            return new CalculCreditResponseDto
-            {
-                MontantEmprunterBrut = montantEmprunterBrut,
-                FraisHypotheque = fraisHypotheque,
-                MontantEmprunterNet = montantEmprunterNet,
-                TauxMensuel = tauxMensuelAffiche,
-                Mensualite = mensualite,
-                TableauAmortissement = tableau
-            };
+            response.MontantEmprunterBrut = montantEmprunterBrut;
+            response.FraisHypotheque = fraisHypotheque;
+            response.MontantEmprunterNet = montantEmprunterNet;
+            response.TauxMensuel = tauxMensuelAffiche;
+            response.Mensualite = mensualite;
+            response.TableauAmortissement = tableau;
+
+            return response;
         }
+
 
         private decimal CalculerTauxMensuelArrondi(decimal tauxAnnuel)
         {

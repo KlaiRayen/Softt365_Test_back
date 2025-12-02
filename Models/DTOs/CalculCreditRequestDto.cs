@@ -16,5 +16,7 @@ namespace Softt365Assessment.Models.DTOs
 
         [Range(0, 100, ErrorMessage = "Le taux annuel doit être compris entre 0% et 100%.")]
         public decimal TauxAnnuel { get; set; }
+        public decimal? FraisAchatOverride { get; set; }
+    
     }
 }

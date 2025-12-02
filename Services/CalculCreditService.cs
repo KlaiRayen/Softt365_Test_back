@@ -25,7 +25,24 @@ namespace Softt365Assessment.Services
 
             response.Success = true;
 
-            decimal fraisAchat = Math.Round(request.MontantAchat * 0.10m, 2);
+            decimal fraisAchat;
+
+            if (request.FraisAchatOverride.HasValue)
+            {
+                fraisAchat = request.FraisAchatOverride.Value;
+            }
+            else
+            {
+                if (request.MontantAchat > 50000)
+                {
+                    fraisAchat = Math.Round(request.MontantAchat * 0.10m, 2);
+                }
+                else
+                {
+                    fraisAchat = 0;
+                }
+            }
+
 
             decimal montantEmprunterBrut =
                 Math.Round(request.MontantAchat + fraisAchat - request.FondsPropres, 2);

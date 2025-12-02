@@ -36,6 +36,14 @@ namespace Soft365Assessment.Services.Validators
                 return errors;
             }
 
+            if (request.FraisAchatOverride.HasValue)
+            {
+                if (request.FraisAchatOverride < 0)
+                    errors.Add("Les frais d'achat ne peuvent pas être négatifs.");
+
+                if (request.FraisAchatOverride >= request.MontantAchat)
+                    errors.Add("Les frais d'achat manuels sont incohérents.");
+            }
 
             return errors;
         }

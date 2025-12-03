@@ -100,6 +100,7 @@ namespace Softt365Assessment.Services
             response.TauxMensuel = tauxMensuelAffiche;
             response.Mensualite = mensualite;
             response.TableauAmortissement = tableau;
+            response.FondsPropres = request.FondsPropres;
 
             return response;
         }
@@ -159,12 +160,11 @@ namespace Softt365Assessment.Services
                 decimal capitalRembourse = mensualite - interet;
                 decimal fin = Math.Round(debut - capitalRembourse, CreditConstants.ARRONDI_DEUX);
 
-                // ⚠ BONUS OBLIGATOIRE : Dernière ligne => solde doit être EXACTEMENT 0
                 if (periode == duree)
                 {
-                    capitalRembourse = debut;                 // On rembourse tout ce qu'il reste
-                    interet = mensualite - capitalRembourse;  // On ajuste l'intérêt
-                    fin = 0;                                  // Solde final = 0
+                    capitalRembourse = debut;
+                    interet = mensualite - capitalRembourse;
+                    fin = 0;
                 }
 
                 lignes.Add(new LigneAmortissementDto

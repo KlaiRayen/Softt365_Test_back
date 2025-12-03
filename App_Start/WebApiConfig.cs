@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using Newtonsoft.Json.Serialization;
+using System.Web.Http;
 
 namespace Softt365Assessment
 {
@@ -7,9 +8,14 @@ namespace Softt365Assessment
         public static void Register(HttpConfiguration config)
         {
 
+            config.EnableCors();
+
+
             var json = config.Formatters.JsonFormatter;
+            json.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             json.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
             config.Formatters.Remove(config.Formatters.XmlFormatter);
+
 
             // ----------------------------------
             // ROUTING

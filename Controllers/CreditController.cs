@@ -1,9 +1,11 @@
-﻿using System.Web.Http;
-using Softt365Assessment.Models.DTOs;
+﻿using Softt365Assessment.Models.DTOs;
 using Softt365Assessment.Services;
+using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Softt365Assessment.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     [RoutePrefix("api/credit")]
     public class CreditController : ApiController
     {

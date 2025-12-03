@@ -138,10 +138,10 @@ namespace Softt365Assessment.Services
         }
 
         private List<LigneAmortissementDto> GenererAmortissement(
-            decimal capitalInitial,
-            decimal tauxMensuel,
-            decimal mensualite,
-            int duree)
+        decimal capitalInitial,
+        decimal tauxMensuel,
+        decimal mensualite,
+        int duree)
         {
             var lignes = new List<LigneAmortissementDto>();
             decimal solde = capitalInitial;
@@ -159,11 +159,12 @@ namespace Softt365Assessment.Services
                 decimal capitalRembourse = mensualite - interet;
                 decimal fin = Math.Round(debut - capitalRembourse, CreditConstants.ARRONDI_DEUX);
 
+                // ⚠ BONUS OBLIGATOIRE : Dernière ligne => solde doit être EXACTEMENT 0
                 if (periode == duree)
                 {
-                    capitalRembourse = debut;
-                    interet = mensualite - capitalRembourse;
-                    fin = 0;
+                    capitalRembourse = debut;                 // On rembourse tout ce qu'il reste
+                    interet = mensualite - capitalRembourse;  // On ajuste l'intérêt
+                    fin = 0;                                  // Solde final = 0
                 }
 
                 lignes.Add(new LigneAmortissementDto
@@ -181,5 +182,6 @@ namespace Softt365Assessment.Services
 
             return lignes;
         }
+
     }
 }

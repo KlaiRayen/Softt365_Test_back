@@ -45,10 +45,31 @@ namespace Softt365Assessment.Services
                 }
             }
 
-            decimal montantEmprunterBrut = Math.Round(
-                request.MontantAchat + fraisAchat - request.FondsPropres,
-                CreditConstants.ARRONDI_DEUX
-            );
+            decimal montantEmprunterBrut;
+
+            if (request.MontantEmprunterOverride.HasValue)
+            {
+                montantEmprunterBrut = Math.Round(
+                    request.MontantEmprunterOverride.Value,
+                    CreditConstants.ARRONDI_DEUX
+                );
+
+                decimal fondsPropresRecalcules =
+                    request.MontantAchat + fraisAchat - montantEmprunterBrut;
+
+                request.FondsPropres = Math.Round(
+                    fondsPropresRecalcules,
+                    CreditConstants.ARRONDI_DEUX
+                );
+            }
+            else
+            {
+                montantEmprunterBrut = Math.Round(
+                    request.MontantAchat + fraisAchat - request.FondsPropres,
+                    CreditConstants.ARRONDI_DEUX
+                );
+            }
+
 
             decimal fraisHypotheque = Math.Round(
                 montantEmprunterBrut * CreditConstants.FRAIS_HYPOTHEQUE_TAUX,

@@ -1,4 +1,5 @@
 ﻿using Softt365Assessment.Models.DTOs;
+using Softt365Assessment.Services.Constants;
 using System.Collections.Generic;
 
 namespace Soft365Assessment.Services.Validators
@@ -44,6 +45,21 @@ namespace Soft365Assessment.Services.Validators
                 if (request.FraisAchatOverride >= request.MontantAchat)
                     errors.Add("Les frais d'achat manuels sont incohérents.");
             }
+
+            if (request.MontantEmprunterOverride.HasValue)
+            {
+                if (request.MontantEmprunterOverride <= 0)
+                    errors.Add("Le montant d'emprunt doit être supérieur à 0.");
+
+                decimal fraisAchatAuto =
+                    (request.MontantAchat > CreditConstants.SEUIL_FRAIS_ACHAT)
+                        ? request.MontantAchat * CreditConstants.FRAIS_ACHAT_TAUX
+                        : 0;
+
+                if (request.MontantEmprunterOverride > request.MontantAchat + fraisAchatAuto)
+                    errors.Add("Le montant d'emprunt est incohérent par rapport au montant d'achat.");
+            }
+
 
             return errors;
         }

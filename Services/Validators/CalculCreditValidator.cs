@@ -13,53 +13,65 @@ namespace Soft365Assessment.Services.Validators
             if (request.MontantAchat <= 0)
                 errors.Add("Le montant d'achat doit être supérieur à 0.");
 
-            if (request.FondsPropres < 0)
-                errors.Add("Les fonds propres ne peuvent pas être négatifs.");
-
             if (request.DureeMois < 1 || request.DureeMois > 600)
                 errors.Add("La durée doit être comprise entre 1 et 600 mois.");
 
             if (request.TauxAnnuel < 0 || request.TauxAnnuel > 100)
                 errors.Add("Le taux annuel doit être compris entre 0% et 100%.");
 
-            if (request.FondsPropres > request.MontantAchat)
-                errors.Add("Les fonds propres ne peuvent pas dépasser le montant d'achat.");
-
-            decimal fraisAchat = request.MontantAchat * 0.10m;
-            decimal montantBrut = request.MontantAchat + fraisAchat - request.FondsPropres;
-
-            if (montantBrut <= 0)
-                errors.Add("Le montant à emprunter doit être supérieur à 0.");
-
-            if (request.FondsPropres >= request.MontantAchat)
+            // When MontantEmprunterOverride is provided, FondsPropres will be calculated
+            if (!request.MontantEmprunterOverride.HasValue)
             {
-                errors.Add("Les fonds propres couvrent déjà le montant d'achat, aucun crédit n'est nécessaire.");
-                return errors;
+                // Standard mode: FondsPropres is required
+                if (!request.FondsPropres.HasValue)
+                {
+                    errors.Add("Les fonds propres sont requis.");
+                    return errors;
+                }
+
+                if (request.FondsPropres.Value < 0)
+                    errors.Add("Les fonds propres ne peuvent pas être négatifs.");
+
+                if (request.FondsPropres.Value > request.MontantAchat)
+                    errors.Add("Les fonds propres ne peuvent pas dépasser le montant d'achat.");
+
+                if (request.FondsPropres.Value >= request.MontantAchat)
+                {
+                    errors.Add("Les fonds propres couvrent déjà le montant d'achat, aucun crédit n'est nécessaire.");
+                    return errors;
+                }
+
+                decimal fraisAchat = request.FraisAchatOverride ??
+                    (request.MontantAchat > CreditConstants.SEUIL_FRAIS_ACHAT
+                        ? request.MontantAchat * CreditConstants.FRAIS_ACHAT_TAUX
+                        : 0);
+
+                decimal montantBrut = request.MontantAchat + fraisAchat - request.FondsPropres.Value;
+                if (montantBrut <= 0)
+                    errors.Add("Le montant à emprunter doit être supérieur à 0.");
+            }
+            else
+            {
+                // Override mode: validate MontantEmprunterOverride
+                if (request.MontantEmprunterOverride.Value <= 0)
+                    errors.Add("Le montant d'emprunt doit être supérieur à 0.");
+
+                decimal fraisAchatAuto = (request.MontantAchat > CreditConstants.SEUIL_FRAIS_ACHAT)
+                    ? request.MontantAchat * CreditConstants.FRAIS_ACHAT_TAUX
+                    : 0;
+
+                if (request.MontantEmprunterOverride.Value > request.MontantAchat + fraisAchatAuto)
+                    errors.Add("Le montant d'emprunt est incohérent par rapport au montant d'achat.");
             }
 
             if (request.FraisAchatOverride.HasValue)
             {
-                if (request.FraisAchatOverride < 0)
+                if (request.FraisAchatOverride.Value < 0)
                     errors.Add("Les frais d'achat ne peuvent pas être négatifs.");
 
-                if (request.FraisAchatOverride >= request.MontantAchat)
+                if (request.FraisAchatOverride.Value >= request.MontantAchat)
                     errors.Add("Les frais d'achat manuels sont incohérents.");
             }
-
-            if (request.MontantEmprunterOverride.HasValue)
-            {
-                if (request.MontantEmprunterOverride <= 0)
-                    errors.Add("Le montant d'emprunt doit être supérieur à 0.");
-
-                decimal fraisAchatAuto =
-                    (request.MontantAchat > CreditConstants.SEUIL_FRAIS_ACHAT)
-                        ? request.MontantAchat * CreditConstants.FRAIS_ACHAT_TAUX
-                        : 0;
-
-                if (request.MontantEmprunterOverride > request.MontantAchat + fraisAchatAuto)
-                    errors.Add("Le montant d'emprunt est incohérent par rapport au montant d'achat.");
-            }
-
 
             return errors;
         }

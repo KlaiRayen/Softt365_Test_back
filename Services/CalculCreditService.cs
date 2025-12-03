@@ -65,7 +65,7 @@ namespace Softt365Assessment.Services
             else
             {
                 montantEmprunterBrut = Math.Round(
-                    request.MontantAchat + fraisAchat - request.FondsPropres,
+                    request.MontantAchat + fraisAchat - request.FondsPropres.Value,
                     CreditConstants.ARRONDI_DEUX
                 );
             }
@@ -96,11 +96,12 @@ namespace Softt365Assessment.Services
 
             response.MontantEmprunterBrut = montantEmprunterBrut;
             response.FraisHypotheque = fraisHypotheque;
+            response.FraisAchat = fraisAchat;
             response.MontantEmprunterNet = montantEmprunterNet;
             response.TauxMensuel = tauxMensuelAffiche;
             response.Mensualite = mensualite;
             response.TableauAmortissement = tableau;
-            response.FondsPropres = request.FondsPropres;
+            response.FondsPropres = request.FondsPropres.Value;
 
             return response;
         }

@@ -9,6 +9,8 @@ namespace Softt365Assessment.Models.DTOs
 
         public decimal MontantEmprunterBrut { get; set; }
         public decimal FraisHypotheque { get; set; }
+        public decimal FraisAchat { get; set; }
+
         public decimal FondsPropres { get; set; }
         public decimal MontantEmprunterNet { get; set; }
         public decimal TauxMensuel { get; set; }

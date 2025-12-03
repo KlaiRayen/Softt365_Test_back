@@ -9,7 +9,7 @@ namespace Softt365Assessment.Models.DTOs
         public decimal MontantAchat { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "Les fonds propres ne peuvent pas être négatifs.")]
-        public decimal FondsPropres { get; set; }
+        public decimal? FondsPropres { get; set; }
 
         [Range(1, 600, ErrorMessage = "La durée doit être comprise entre 1 et 600 mois.")]
         public int DureeMois { get; set; }

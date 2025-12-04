@@ -7,6 +7,6 @@ public class RootController : ApiController
     [Route("")]
     public IHttpActionResult Get()
     {
-        return Ok("Utilisez /api/credit/calculer pour tester.");
+        return Ok("Projet exécuté avec succès ! Visitez /swagger pour tester les APIs.");
     }
 }

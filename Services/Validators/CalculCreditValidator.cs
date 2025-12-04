@@ -19,10 +19,8 @@ namespace Soft365Assessment.Services.Validators
             if (request.TauxAnnuel < 0 || request.TauxAnnuel > 100)
                 errors.Add("Le taux annuel doit être compris entre 0% et 100%.");
 
-            // When MontantEmprunterOverride is provided, FondsPropres will be calculated
             if (!request.MontantEmprunterOverride.HasValue)
             {
-                // Standard mode: FondsPropres is required
                 if (!request.FondsPropres.HasValue)
                 {
                     errors.Add("Les fonds propres sont requis.");
@@ -52,7 +50,6 @@ namespace Soft365Assessment.Services.Validators
             }
             else
             {
-                // Override mode: validate MontantEmprunterOverride
                 if (request.MontantEmprunterOverride.Value <= 0)
                     errors.Add("Le montant d'emprunt doit être supérieur à 0.");
 

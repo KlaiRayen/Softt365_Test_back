@@ -226,7 +226,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Dockerfile" />
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
